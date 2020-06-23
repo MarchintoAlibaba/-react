@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    
+</body>
+<script>
+    //*是生成器的标识符 其作用是提高性能
+    function *generator(){
+        yield 1;//遇到yield就会中断并停止 并将值保留给迭代器
+        yield 2;
+        yield 3;
+    }
+
+// 例如：斐波那契函数 0 1 2 3 5 8 13 21
+function *numGenerator(n = 5){
+    console.log("generator");
+    let num = 0,
+        pre1 = 0,
+        pre2 = 0;
+    if(num == 0){
+        num ++;
+        pre2 = 1;
+        yield 0;
+    }
+    while(true){
+        num ++;
+        let result = pre1 + pre2;
+        pre1 = pre2;
+        pre2 = result;
+        yield result;//遇到yield就会中断并停止 并将值保留以便下一次使用
+        if(num >= n){
+            break;
+        }
+    }
+
+}
+let numgenerator = numGenerator(5);
+console.log("99")
+for(let i of numgenerator){
+    console.log(i);
+}
+let numgenerator1 = numGenerator(8);
+for(let i of numgenerator1){
+    console.log(i);
+}
+
+</script>  
+</html>

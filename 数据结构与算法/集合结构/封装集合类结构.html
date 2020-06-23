@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    
+</body>
+<script>
+    function Set(){
+        //属性
+        this.items = {};//这里基于对象实现
+        //方法
+        Set.prototype.add = function(value){//添加一个新的项
+            if(this.has(value)){
+                return false;
+            }
+            this.items[value] = value;
+            return true;
+        }
+        Set.prototype.remove = function(value){//删除一个新的项
+            if(!this.has(value)){
+                return false;
+            }
+            delete this.items[value];
+            return true;
+        }
+        Set.prototype.has = function(value){//查找是否有一个新的项
+            return this.items.hasOwnProperty(value);
+        }
+        Set.prototype.clear = function(){//清除集合中所有的值
+            this.items = {};
+        }
+        Set.prototype.size = function(){//返回集合中包含元素的数量
+            return Object.keys(this.items).length;
+        }
+        Set.prototype.values = function(){//返回一个包含集合中所有值的属猪
+            return Object.keys(this.items);
+        }
+        Set.prototype.union = function(setB){//求两个集合的并集 参数传入另外一个集合
+            let setUnion = new Set();//先创建一个空的集合 用来装其他两个集合的并集
+            let values = this.values();//先将一个集合用数组的方式表示
+            for(let i = 0;i < values.length;i ++){//循环数组将每一项添加到并集中
+                setUnion.add(values[i]);
+            }
+            values = setB.values();//再将另一个集合用数组的方式表示
+            for(let i = 0;i < values.length;i ++){//循环另一个数组将每一项添加到并集中（这里add方法最先有判断 不添加已有的项）
+                setUnion.add(values[i]);
+            }
+            return setUnion;//返回新的并集
+        }
+        Set.prototype.intersection = function(setC){//求两个集合的交集 参数传入另外一个集合
+            let intersection = new Set();
+            let valuesA = this.values(),
+            valuesAL = valuesA.length;
+            for(let i = 0;i < valuesAL;i ++){
+                if(setC.has(valuesA[i])){
+                    console.log(99)
+                    intersection.add(valuesA[i]);
+                }
+            }
+            return intersection;
+        }
+        Set.prototype.difference = function(setC){//求两个集合的差集（存在a集合中 但不存在b集合中） 参数传入另外一个集合
+            let difference = new Set();
+            let valuesA = this.values(),
+            valuesAL = valuesA.length;
+            for(let i = 0;i < valuesAL;i ++){
+                if(!setC.has(valuesA[i])){
+                    difference.add(valuesA[i]);
+                }
+            }
+            return difference;
+        }
+        Set.prototype.subset = function(setB){//验证集合是否为setB的子集，如果是返回true 如果不是返回false;
+            let values = this.values(),
+            valuesL = values.length;
+            for(let i = 0;i < valuesL;i ++){//循环所有的集合元素
+                if(!setB.has(values[i])){//如果该集合有一项不在集合b中 中该集合不是集合b的子集
+                    return false;
+                }
+            }
+            return true;
+        }
+    }
+    //测试
+    let set = new Set();
+    set.add('aa');
+    set.add('bb');
+    // set.remove('aa');
+    // set.clear();
+    // console.log(set.values())
+    // console.log(set.items)
+    let setB = new Set();
+    setB.add('aa');
+    setB.add('cc');
+    setB.add('dd');
+    console.log(set.intersection(setB))
+    console.log(set.difference(setB))
+    // console.log(set.subset(setB))
+</script>
+</html>

@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    
+</body>
+<script>
+    //双向链表与单项链表的区别是：单项链表的元素上面只有data和next属性 双向链表则多了一个向前寻找的引用（prev） 双向链表末尾项是tail项
+    function DoublyLinkedList(){
+        this.head = null;
+        this.tail = null;//比单向链表多了一个末尾元素的获取名字
+        this.length = 0;
+        function Node(data){
+            this.data = data;
+            this.next = null;
+            this.prev = null;
+        }
+        DoublyLinkedList.prototype.append = function(data){//向尾部添加一个新的项
+            let node = new Node(data);
+            if(this.length === 0){
+                this.head = node;
+            }else{
+                this.tail.next = node;
+                node.prev = this.tail;
+            }
+            this.tail = node;
+            this.length ++;
+        }
+        DoublyLinkedList.prototype.insert = function(position,data){//向链表的指定位置加入新的项
+            //越界判断
+            if(position < 0 || position > this.length){
+                return '你输入的参数有误';
+            }else{
+                let node = new Node(data),
+                index = 0,
+                current = this.head;
+                if(position === 0){//如果指定在第一项加入
+                    node.next = this.head;
+                    this.head.prev = node;
+                    this.head = node;
+                }else if(position === this.length){//如果是最后一项
+                    node.prev = this.tail;
+                    this.tail.next = node;
+                    this.tail = node;
+                    this.length ++;
+                }else{
+                    while(current){
+                        if(index === position){
+                            break;
+                        }
+                        current = current.next;
+                        index ++;
+                    }
+                    current.prev.next = node;
+                    current.prev = node;
+                    node.prev = current.prev;
+                    node.next = current;
+                    this.length ++;
+                }
+            }
+        }
+        DoublyLinkedList.prototype.get = function(position){//获取对应位置的元素
+            if(position < 0 || position > this.length){
+                return '你输入的参数有误';
+            }else{
+                if(position === this.length - 1){
+                    return this.tail.data;
+                }else{
+                    let index = 0,
+                    current = this.head;
+                    while(current){
+                        if(index === position){
+                            break;
+                        }
+                        index ++;
+                        current = current.next;
+                    }
+                    return current.data;
+                }
+            }
+        }
+        DoublyLinkedList.prototype.indexOf = function(data){//根据数据查找链表里面是否有该数据 如果有就返回其索引 没有就返回-1
+            let index = 0,
+            current = this.head;
+            while(current){
+                if(current.data === data){
+                    return index;
+                }
+                index ++;
+                current = current.next;
+            }
+            return -1;
+        }
+        DoublyLinkedList.prototype.update = function(position,data){//修改某个位置的元素
+            if(position < 0 || position > this.length){
+                return '你输入的参数有误';
+            }else{
+                let index = 0,
+                current = this.head;
+                while(current){
+                    if(index === position){
+                        current.data = data;
+                    }
+                    index ++;
+                    current = current.next;
+                }
+            }
+        }
+        DoublyLinkedList.prototype.removeAt = function(position){//从链表中的特定位置移除一项
+            if(position < 0 || position > this.length){
+                return '你输入的参数有误';
+            }else{
+                if(position === 0){
+                    this.head = this.head.next;
+                    this.head.prev = null;
+                }else{
+                    let index = 0,
+                    current = this.head;
+                    while(current){
+                        if(index === position){
+                            current.prev.next = current.next;
+                            current.next ? current.next.prev = current.prev : this.tail = current.prev;//判断删除的是否是最后一项 如果是就将上一项名成最后一项
+                            break;
+                        }
+                        index ++;
+                        current = current.next;
+                    }
+                }
+                this.length --;
+            }
+        }
+        DoublyLinkedList.prototype.remove = function(data){//从链表中移除某一项
+            let current = this.head,
+            index = 0;
+            while(current){
+                if(current.data === data){
+                    if(index === 0){
+                        current.next.prev = null;
+                        this.head = current.next;
+                        break;
+                    }else{
+                        current.prev.next = current.next;
+                        current.next ? current.next.prev = current.prev : this.tail = current.prev;
+                    }
+                }
+                index ++;
+                current = current.next;
+            }
+        }
+        DoublyLinkedList.prototype.isEmpty = function(){
+            return this.length === 0;
+        }
+        DoublyLinkedList.prototype.size = function(){
+            return this.length;
+        }
+        DoublyLinkedList.prototype.toString = function(){
+            let current = this.head,
+            string = '';
+            while(current){
+                string += current.data + ' ';
+                current = current.next;
+            }
+            return string;
+        }
+    }
+    //测试
+    let doublylinkedlist = new DoublyLinkedList();
+    doublylinkedlist.append('xm');
+    doublylinkedlist.append('xz');
+    doublylinkedlist.append('xl');
+    doublylinkedlist.insert(3,'xx');
+    // doublylinkedlist.update(2,'xk');
+    doublylinkedlist.remove('xl')
+    console.log(doublylinkedlist)
+    alert(doublylinkedlist);
+    // alert(doublylinkedlist.indexOf('xk'));
+</script>
+</html>

@@ -1,0 +1,10 @@
+.title{
+    color:gray;
+}
+#special{
+    font-size:30px;
+}
+/* 像这样写的类名就不会被转译 不会被模块化 全局都用 */
+:global(.test){ 
+    font-style:italic;
+} 

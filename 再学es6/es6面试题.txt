@@ -1,0 +1,1 @@
+常用的es6有哪些：解构赋值 模板字符串 参数默认值 Promise let const async(异步) await（等待）  generator （生成器）

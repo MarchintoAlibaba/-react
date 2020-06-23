@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    
+</body>
+<script>
+    //对栈结构的封装 可以用数组和链表 现在我们用数组
+    //栈结构 就相当于我们就羽毛球放入球桶再拿出来一样 要遵守先进后出
+    //现在我们用面向对象的方法封装一个栈结构 一个栈结构要符合增删查几个方法
+    function Stack(){
+        this.item = [];
+        //增加一个数据
+        Stack.prototype.add = function(num){
+            this.item.push(num);
+        }
+        //删除一个数据（要删除数据的最后一项 要符合先进后出原则）
+        Stack.prototype.delete = function(){
+            this.item.pop();
+        }
+        //查看只能查看数据中的最后一项
+        Stack.prototype.look = function(){
+            return this.item[this.item.length - 1];
+        }
+        //查看数据是否为空
+        Stack.prototype.isEmpty = function(){
+            return this.item.length === 0;
+        }
+        //查看数据的长度
+        Stack.prototype.length = function(){
+            return this.item.length;
+        }
+        //将整个数据展示出来
+        Stack.prototype.toString = function(){
+            return this.item.join(' ');
+        }
+    }
+//栈的常见操作
+let stack = new Stack();
+stack.add('data1');
+stack.add('data2');
+stack.add('data3')
+console.log(stack.look());
+console.log(stack.toString());
+stack.delete();
+stack.delete();
+console.log(stack.toString());
+</script>
+</html>

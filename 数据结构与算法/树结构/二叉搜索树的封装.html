@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    
+</body>
+<script>
+    //二叉搜索树（binary search tree）就是二分法查找的底层逻辑
+    //二叉树的特点是；每个子节点最多只有两个 但是我们可以把所有的树结构都看做是二叉树（如果将每棵树都看做只有左子节点和右兄弟节点的话）
+    //二叉搜索树的特点是：每个左子节点要比父节点小 每个右子节点要比父节点大
+    //二叉搜索树的缺点是：如果插入一些有序的数据，树的深度就非常高导致树不平衡（非平衡树） 在查找和插入的时候效率就不高（在极端条件下就是链表结构）
+    function BinarySearchTree(){
+        //属性：
+        this.root = null;
+        //一个一个节点的内部类
+        function Node(key){
+            this.key = key;//每个节点上的key值 这里本来要有value值的 this.value = value 为了方便起见 就没加这个值
+            this.left = null;//左节点引用
+            this.right = null;//右节点引用
+        }
+        //方法
+        BinarySearchTree.prototype.insert = function(key){//向树中插入一个新的节点
+            let newNode = new Node(key);
+            if(this.root == null){//判断我插入的节点是否是第一个节点 如果是直接插入根节点
+                this.root = newNode;
+            }else{//如果不是 就需要用递归函数来寻找 我插入新节点的位置
+                this.insertNode(this.root,newNode);
+            }
+        }
+        BinarySearchTree.prototype.insertNode = function(node,newNode){//x写一个递归函数来判断新节点插入的位置
+            if(newNode.key > node.key){//如果新节点的key大于根节点 就看根节点的右子节点
+                if(node.right == null){//再判断根节点的右子节点是否为空 如果为空 根节点的右子节点=新节点
+                    node.right = newNode;
+                }else{//如果根节点的右子节点不为空 就用递归函数继续比较根节点的子节点与新节点
+                    this.insertNode(node.right,newNode);
+                }
+            }else{//如果新节点的小于根节点 就看根节点的左子节点
+                if(node.left == null){//再判断根节点的左子节点是否为空 如果为空 根节点的左子节点=新节点
+                    node.left = newNode;
+                }else{//如果根节点的左子节点不为空 就用递归函数继续比较根节点的子节点与新节点
+                    this.insertNode(node.left,newNode);
+                }
+            }
+        }
+        //先序遍历：先遍历根节点 再遍历所有的左子节点 再遍历所有的右子节点
+        BinarySearchTree.prototype.prevOrderTraversal = function(handler){
+            this.prevOrderTraversalNode(this.root,handler);//这里的handler是回调函数 这个回调函数的作用是用来怎么处理节点的key值
+        }
+        BinarySearchTree.prototype.prevOrderTraversalNode = function(node,handler){//这里是一个递归函数 返回节点的key值
+            if(node != null){
+                //处理节点
+                handler(node.key);
+                //循环所有的左子节点
+                this.prevOrderTraversalNode(node.left,handler);
+                //循环所有的右子节点
+                this.prevOrderTraversalNode(node.right,handler);
+            }
+        }
+        //中序遍历：先遍历所有的左子节点 再遍历根节点 再遍历所有的右子节点
+        BinarySearchTree.prototype.midOrderTraversal = function(handler){
+            this.midOrderTraversalNode(this.root,handler);
+        }
+        BinarySearchTree.prototype.midOrderTraversalNode = function(node,handler){
+            if(node != null){
+                //循环所有的左子节点
+                this.prevOrderTraversalNode(node.left,handler);
+                //处理节点
+                handler(node.key);
+                //循环所有的右子节点
+                this.prevOrderTraversalNode(node.right,handler);
+            }
+        }
+        //后序遍历：先遍历所有的左子节点 再遍历所有的右子节点 再遍历根节点
+        BinarySearchTree.prototype.postOrderTraversal = function(handler){
+            this.postOrderTraversalNode(this.root,handler);
+        }
+        BinarySearchTree.prototype.postOrderTraversalNode = function(node,handler){
+            if(node != null){
+                //循环所有的左子节点
+                this.prevOrderTraversalNode(node.left,handler);
+                
+                //循环所有的右子节点
+                this.prevOrderTraversalNode(node.right,handler);
+                //处理节点
+                handler(node.key);
+            }
+        }
+        //寻找最小值 一直往左边查找 直到为空
+        BinarySearchTree.prototype.min = function(){
+            let node = this.root,
+            key = null;
+            while(node != null){
+                key = node.key;
+                node = node.left;
+            }
+            return key;
+        }
+        //寻找最大值 一直往右边查找 直到为空
+        BinarySearchTree.prototype.min = function(){
+            let node = this.root,
+            key = null;
+            while(node != null){
+                key = node.key;
+                node = node.right;
+            }
+            return key;
+        }
+        //搜索二叉搜索树里指定的key值
+        BinarySearchTree.prototype.search = function(key){
+            let node = this.root;
+            while(node != null){
+                if(key < node.key){//如果传进来的key小于node的key值
+                    node = node.left;//往左边查找
+                }else if(key > node.key){//如果传进来的key大于node的key值
+                    node = node.right;//往右边查找
+                }else{//如果传进来的key与node的key相等 就直接返回该key值
+                    return true;
+                }
+            }
+            return false;
+        }
+        //二叉搜索树删除节点的几种情况
+        //1.没有找到该节点 直接返回不需要删除
+        //2.删除的是叶子节点，这个可以直接删除
+        // 3.删除的是只有一个子节点的节点 这个可以直接让其父节点指向其子节点
+        // 4.删除的节点有两个子节点
+        BinarySearchTree.prototype.remove = function(key){
+            //声明一些必要的变量
+            let current = this.root,
+            parent = null,isLeftChild;
+            //要先寻找到要删除的节点 再删除
+            while(current.key != key){//如果key不等于 就继续让下寻找
+                if(key < current.key){//如果key小于节点的key 就向节点的左边查找
+                    isLeftChild = true;
+                    parent = current;//当前节点的父节点
+                    current = current.left;
+                }else{
+                    isLeftChild = false;
+                    parent = current;//当前节点的父节点
+                    current = current.left;
+                }
+                if(current == null){//如果当最后节点为空都没有找到相对应的key 说明该key值不存在
+                    return false;
+                }
+            }
+            //删除的是叶子节点，这个可以直接删除
+            if(current.left == null && current.right == null){
+                if(current == this.root){//判断删除的是否是根节点
+                    this.root = null;
+                }else if(isLeftChild){
+                    parent.left = null;
+                }else{
+                    parent.right = null;
+                }
+            }else if(current.left || current.right){ // 3.删除的是只有一个子节点的节点 这个可以直接让其父节点指向其子节点
+                if(current == this.root){//判断删除的是否是根节点
+                    this.root = current.left || current.right;
+                }else if(isLeftChild){
+                    if(current.left){
+                        parent.left = current.left;
+                    }else{
+                        parent.left = current.right;
+                    }
+                }else{
+                    if(current.left){
+                        parent.right = current.left;
+                    }else{
+                        parent.right = current.right;
+                    }
+                }
+            }else{// 4.删除的节点有两个子节点
+                //1.获取后继节点
+                let successor = this.getSuccessor(current);
+                //2.判断是否删除根节点
+                if(current == this.root){
+                    this.root = successor;
+                }else if(isLeftChild){
+                    parent.left = successor;
+                }else{
+                    parent.right = successor;
+                }
+                //3.将删除后继节点的左子树 current.left
+                successor.left = current.left;
+            }
+        }
+        BinarySearchTree.prototype.getSuccessor = function(delNode){//获取后继节点的方法
+            //1.定义变量 保存找到的后继
+            let successor = delNode,
+            current = delNode.right,
+            successorParent = delNode;
+            //2.循环查找
+            while(current != null){
+                successorParent = successor; 
+                successor = current;
+                current = current.left;
+            }
+            // 3.判断寻找的后继节点 是否就是delNode的right节点
+            if(successor != delNode.right){
+                successorParent.left = successor.right;
+                successor.right = delNode.right;
+            }
+            return successor;   
+        }
+    }
+    //测试
+    //实例化构造函数
+    let binarysearchtree = new BinarySearchTree();
+    binarysearchtree.insert(11);
+    binarysearchtree.insert(7);
+    binarysearchtree.insert(15);
+    binarysearchtree.insert(5);
+    binarysearchtree.insert(3);
+    binarysearchtree.insert(9);
+    binarysearchtree.insert(8);
+    binarysearchtree.insert(10);
+    binarysearchtree.insert(13);
+    binarysearchtree.insert(12);
+    binarysearchtree.insert(14);
+    binarysearchtree.insert(20);
+    binarysearchtree.insert(18);
+    binarysearchtree.insert(25);
+    binarysearchtree.insert(6);
+    console.log(binarysearchtree.root.right.right.right.key);
+    console.log(binarysearchtree.root.right.right.left.key);
+    console.log(binarysearchtree.root.right.left.left.key);
+    console.log(binarysearchtree.root.left.key);
+    console.log(binarysearchtree.root.left.left.key);
+    console.log(binarysearchtree.root.left.right.key);
+    let str = '';
+    binarysearchtree.prevOrderTraversal(function(key){
+        str += key + ' ';
+    })
+    console.log(str)
+</script>
+</html>

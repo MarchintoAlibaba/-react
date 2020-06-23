@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    
+</body>
+<script>
+    //封装一个单项列表
+    function LinkedList(){
+        function Node(data){
+            this.data = data;//数组
+            this.next = null;//指向下一个数据
+        }
+        //属性
+        this.length = 0;
+        this.head = null;
+        // 1.追加添加（append）方法 添加到链表的最后一项
+        LinkedList.prototype.append = function(data){
+            let node = new Node(data);
+            //判断是否为链表的第一个数据
+            if(this.length === 0){
+                this.head = node;
+            }else{
+                //head指向第一个链表数据 链表数据上有两个数据 一个是data 一个是下一个链表数据的指向
+                let current = this.head;
+                //利用循环找到链表最后一项 因为链表的最后一项的next为null
+                while(current.next){
+                    current = current.next;
+                }
+                //最后的节点的next指向新节点
+                current.next = node;
+            }
+            this.length += 1;
+        }
+        LinkedList.prototype.toString = function(){
+            let current = this.head,
+            listString = '';
+            while(current){
+                listString += current.data + ' ';
+                current = current.next;
+            }
+            return listString;
+        }
+        //插入到指定索引的位置
+        LinkedList.prototype.insert = function(position,data){
+            var node = new Node(data);
+            //排除越界参数
+            if(position < 0 || position > this.length){
+                return '你输入的参数有误';
+            }else if(position == 0){//插入指点位置就两个操作 一个是让前一个的next指向新插入的data 再一个就是让新插入的data的text属性指向刚才位置上的元素
+                let current = this.head;
+                this.head = node;
+                this.head.next = current;
+            }else{
+                let index = 0,
+                current = this.head,
+                previous;
+                while(index ++ !== position){
+                    previous = current;
+                    current = current.next;
+                }
+                previous.next = node;
+                node.next = current;
+            }
+            this.length ++;
+        }
+        //get方法就是根据提供的索引 查找链表中对应的元素
+        LinkedList.prototype.get = function(position){
+            //排除越界参数
+            if(position < 0 || position >= this.length){
+                return '你输入的参数有误';
+            }else{
+                let index = 0,
+                current = this.head;
+                while(index ++ !== position){
+                    current = current.next;
+                }
+                return current.data;
+            } 
+        }
+        //传递一个数据进去 查找链表里面是否有该数据 如果有返回该索引 如果没有返回-1
+        LinkedList.prototype.indexOf = function(data){
+            let index = 0,
+            current = this.head;
+            console.log(this.length)
+            for(index;index < this.length;index ++){
+                if(current.data == data){
+                    return index;
+                }
+                current = current.next;
+            }
+            return -1
+        }
+        //删除指定索引的元素
+        LinkedList.prototype.removeAt = function(position){
+            //参数越界处理
+            if(position < 0 || position > this.length){
+                return '你输入的参数有误';
+            }else if(position === 0){
+                this.head = this.head.next;
+            }else{
+                let index = 0,
+                current  = this.head,
+                previous;
+                while(index !== position){
+                    previous = current;
+                    index ++;
+                    current = current.next;   
+                }
+                previous.next = current.next;
+            }
+        }
+        LinkedList.prototype.isEmpty = function(){
+            return this.length === 0;
+        }
+        LinkedList.prototype.size = function(){
+            return this.length;
+        }
+    }
+    //测试区
+    let linkedlist = new LinkedList();
+    linkedlist.append('xm');
+    linkedlist.append('xl');
+    linkedlist.append('xz');
+    linkedlist.insert(0,'xx');
+    linkedlist.removeAt(-1);
+    console.log(linkedlist.head);
+    console.log(linkedlist.head.next);
+    console.log(linkedlist.head.next.next);
+    alert(linkedlist);
+    // alert(linkedlist.get(0));
+    // alert(linkedlist.indexOf('xk'));
+
+</script>
+</html>

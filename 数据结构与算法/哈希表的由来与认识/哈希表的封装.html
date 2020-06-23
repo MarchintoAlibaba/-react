@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    
+</body>
+<script>
+    //哈希表的封装 用的是链地址法
+    function HashTable(){
+        //需要的属性
+        this.storage = [];//哈希表是基于数组的，用数据来存放数据
+        this.count = 0;//这是记录当前哈希表里已经存放了多少个值
+        this.limit = 7;//数组总长，记录最多可以存放值的个数 为质数
+        //哈希函数 将key值与数组的下标对应起来 后面用这个函数通过key值得到在哈希表中对应的下边值
+        HashTable.prototype.hashFunc = function(str,size){
+            let hashCode = 0;
+            for(let i = 0;i < str.length;i ++){
+                hashCode = hashCode * 37 + str.charCodeAt();
+            }
+            let index = hashCode % size;
+            return index;
+        }
+        //count/limit的比值称为装填因子（数据总长/哈希表长度）
+        //我们知道开放地址法的装填因子最大为1，链地址法的装填因子可以大于1，但装填因子过大会影响效率 所以我们在数据变多时需要增加哈希表的长度
+        //叫扩容 当数据减少时 也要减少哈希表的长度 叫缩容 
+        //如何扩容和缩容 我们知道哈希表的总长最好是质数 所以当扩容是将原来数组长度乘以2 再逐一加一来需要质数 缩容也是如此 先除以2 再逐一加一
+        //判断是否是质数
+        HashTable.prototype.isPrime = function(num){
+            var temp = parseInt(Math.sqrt(num));
+            for(let i = 2;i <= temp;i ++){
+                if(num % i == 0) return false;
+            }
+            return true;
+        }
+        //获取质数 
+        HashTable.prototype.getPrime = function(num){
+            while(!this.isPrime(num)){//如果不是质数就加1 是就将该质数返回
+                num ++;
+            }
+            return num;
+        }
+        //重新存储 当扩容或缩容后数据的从新存储
+        HashTable.prototype.resize = function(newLimit){
+            //1.用oldStorage装之前的哈希表
+            let oldStorage = this.storage;
+            //2.重置所有的属性
+            this.storage = [];
+            this.count = 0;
+            this.limit = 7;
+            //3.遍历oldStorage中所有的桶bucket
+            for(let i = 0;i < oldStorage.length;i ++){
+                let bucket = oldStorage[i];
+                //3.2判断bucket是否为空
+                if(bucket === unll) continue;
+                //3.3 bucket不为空 则将元素插入到新的数组中
+                for(let j = 0;j < bucket.length;j ++){
+                    let tuple = bucket[j];
+                    this.put(tuple[0],tuple[1]);
+                }
+            }
+        }
+        //何时需要扩容或缩容 当装填因子大于0.75时需要扩容 当小于0.25时需要缩容
+        //向哈希表添加元素
+        HashTable.prototype.put = function(key,value){
+            //1.根据key值获取index值，找到相应的位置
+            let index = this.hashFunc(key,this.limit);
+            //2.根据对应的index位置 获取对应的bucket
+            let bucket = this.storage[index];
+            //如果桶不存在就创建桶
+            if(bucket == null){
+                bucket = [];
+                this.storage[index] = bucket;
+            }
+            //3.判断该桶中是否存在该key
+            //3.1如果存在则修改元素的value值
+            for(let i = 0;i < bucket.length;i ++){
+                let tuple = bucket[i];
+                if(tuple[0] == key){
+                    tuple[1] = value;
+                    return;
+                }
+            }
+            //3.2 如果不存在则遍历到最后将之插入
+            bucket.push([key,value]);
+            this.count += 1;
+            //4 判断是否需要扩容
+            if(this.count > this.limit * 0.75){
+                let newSize = this.limit * 2;
+                let newPrime = this.getPrime(newSize);//得到新的哈希表的总长（质数）
+                this.resize(newPrime);//重新分配存储元素
+            }
+        }
+        //获取某个元素的值get(key)
+        //思路 1.根据key获取index值 找到相应的位置 2.根据对应的index位置找到相应的桶bucket
+        //如果桶bucket不存在就返回null
+        //如果桶bucket存在就遍历桶查找是否有该key值 
+        //如果有就返回该key值对应的value 如果没有返回null
+        HashTable.prototype.get = function(key){
+            //1.根据key值 获取index值
+            let index = this.hashFunc(key,this.limit);
+            //2.根据对应的index位置 获取对应的桶 bucket
+            let bucket = this.storage[index];
+            //如果桶不存在就返回null
+            if(bucket == null) return null;
+            //如果桶存在 就遍历查找是否存在key值 存在则返回对应的value
+            for(let i = 0;i < bucket.length;i ++){
+                let tuple = bucket[i];
+                if(tuple[0] == key){
+                    return tuple[1]
+                }
+            }
+            return null;
+        }
+        //删除哈希表中某一项remove(key)
+        //思路 根据key值获取index值 根据index值找到桶 遍历桶查找key值 有就删除 并返回其value 没有就返回null
+        HashTable.prototype.remove = function(key){
+            //根据key值获取index值
+            let index = this.hashFunc(key,this.limit);
+            //根据index值找到桶
+            let bucket = this.storage[index];
+            //如果桶不存在就返回null
+            if(bucket == null) return null;
+            for(let i = 0;i < bucket.length;i ++){
+                let tuple = bucket[i];
+                if(tuple[0] == key){
+                    bucket.splice(i,1);//删除数组中的这一项
+                    this.count -= 1;
+                    //判断是否需要缩容
+                    if(this.limit > 7 && this.count < this.limit * 0.25){
+                        let newSize = Math.floor(this.limit / 2);
+                        let newPrime = this.getPrime(newSize);
+                        this.resize(newPrime);
+                    }
+                    return tuple[1];
+                }
+            }
+            //不存在返回null；
+            return null;
+        }
+        //其他方法
+        HashTable.prototype.isEmpty = function(){
+            return this.count === 0;
+        }
+        HashTable.prototype.size = function(){
+            return this.count;
+        }
+    }
+    //测试
+    let ht = new HashTable();
+    // 2、插入数据
+    ht.put('abc', '123');
+    ht.put('cba', '321');
+    ht.put('hjg', '564');
+    ht.put('kuo', '854');
+ 
+    // 3、获取数据
+    alert(ht.get('abc')); //123
+ 
+    // 4、修改操作
+    ht.put('abc', '222');
+    alert(ht.get('abc'));  //222
+ 
+ 
+    // 5、删除操作
+    ht.remove('abc');
+    alert(ht.get('abc'));  //null
+    // console.log(hashtable.isPrime(13));
+</script>
+</html>

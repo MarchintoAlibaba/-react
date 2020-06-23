@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    
+</body>
+<script>
+    //队列结构与栈结构相反 相当于排队打饭 先进先出
+    //对队列结构进行封装 用面向对象的方式 具有增删查的方法
+    function Queue(){
+        this.item = [];
+        //增加一个数据
+        Queue.prototype.add = function(num){
+            this.item.push(num);
+        }
+        //删除一个数据 删除数据的第一项
+        Queue.prototype.delete = function(){
+            return this.item.shift();
+        }
+        //查看数据是否为空
+        Queue.prototype.isEmpty = function(){
+            return this.item.length === 0;
+        }
+        //查看数据的长度
+        Queue.prototype.length = function(){
+            return this.item.length;
+        }
+        //查看数据的第一项
+        Queue.prototype.look = function(){
+            return this.item[0];
+        }
+        Queue.prototype.toString = function(){
+            return this.item.join(' ');
+        }
+    }
+    //队列结构的应用
+    let queue = new Queue();
+    // queue.add('11');
+    // queue.add('22');
+    // queue.add('33');
+    // console.log(queue.look());
+    // console.log(queue.toString());
+    // queue.delete()
+    // console.log(queue.toString());
+    // 利用队列结构 实现一个击鼓传花的代码
+    // 大致实现的功能是 现在是6个人 第一个人从1开始数 后面的人一次2 3 数到5的人被淘汰 后面一个人接着数一 问最后剩下的人是谁
+    queue.add('zs');
+    queue.add('ls');
+    queue.add('ww');
+    queue.add('xm');
+    queue.add('xz');
+    queue.add('xp');
+    while(queue.length() != 1){
+        console.log(222)
+        for(let i = 1;i <=5 ;i ++){
+            let first = queue.delete();
+            if(i != 5){
+                queue.add(first);
+            }
+        }
+    }
+    console.log(queue.toString());
+</script>
+</html>   
