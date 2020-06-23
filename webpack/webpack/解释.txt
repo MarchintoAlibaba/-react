@@ -1,0 +1,5 @@
+02webpack的配置：说的是一些webpack的基础配置文件，包括出口入口；配置本地webpack 配置scripts命令 'build':'webpack'
+03:配置css加载用css-loader 配置将样式添加到dom中的用style-loader
+webpack想较gulp的优势在于 webpack更加注重模块化编程 而 gulp更注重任务自动化
+
+要求：不通过脚手架搭建配置以模块化开发的项目  666
